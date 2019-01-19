@@ -81,6 +81,7 @@ public class ZombieMove : MonoBehaviour {
 
     	if (HP <= 0 && alive == true){
     		alive = false;
+            die();
     		animator.SetBool("isWalking", false);
     		animator.SetBool("isFighting", false);
     		animator.SetBool("alive", false);
@@ -102,6 +103,11 @@ public class ZombieMove : MonoBehaviour {
     	}
     }
 
+    public void TakeDmg(float dmg){
+        HP = HP - dmg;
+
+    }
+
     IEnumerator dmg(GameObject enemy){
     	yield return new WaitForSeconds(0.5f);
     	
@@ -113,8 +119,19 @@ public class ZombieMove : MonoBehaviour {
     	}
     }
 
+    public void die(){
+        MayaMove MayaS = Maya.GetComponent<MayaMove>();
+        MayaS.money += money;
+        if (MayaS.XP + XP >= MayaS.xpNextLvl){
+            MayaS.LevelUp(XP);
+        }
+        else {
+            MayaS.XP += XP;
+        }
+    }
+
     IEnumerator death(){
-    	if (Random.Range(0f, 100f) <= 25f){
+    	if (Random.Range(0f, 100f) <= 50f){
     		Instantiate(LifeBall, transform.position, Quaternion.identity);
     	}
     	Destroy(GetComponent<CapsuleCollider>());

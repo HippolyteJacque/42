@@ -26,8 +26,11 @@ public class StatsTab : MonoBehaviour {
 	public Button ConstitutionPlus;
 	public Button CloseTab;
 
+	private MayaMove MayaS;
+
 	// Use this for initialization
 	void Start () {
+		MayaS = GetComponent<MayaMove>();
 		StatsCanvas.alpha = 0f;
 	}
 	
@@ -54,18 +57,18 @@ public class StatsTab : MonoBehaviour {
 	}
 
 	void UpdateValues(){
-		XPValue.text = Mathf.RoundToInt(GetComponent<MayaMove>().XP).ToString();
-		XPNextLevelValue.text = GetComponent<MayaMove>().xpNextLvl.ToString();
-		LevelValue.text = GetComponent<MayaMove>().Level.ToString();
-		StrenghValue.text = GetComponent<MayaMove>().STR.ToString();
-		AgilityValue.text = GetComponent<MayaMove>().AGI.ToString();
-		ConstitutionValue.text = GetComponent<MayaMove>().CON.ToString();
-		HPValue.text = GetComponent<MayaMove>().maxHP.ToString();
-		CreditsValue.text = GetComponent<MayaMove>().Credits.ToString();
-		minDMGValue.text = Mathf.RoundToInt(GetComponent<MayaMove>().minDamage).ToString();
-		maxDMGValue.text = Mathf.RoundToInt(GetComponent<MayaMove>().maxDamage).ToString();
-		ArmorValue.text = GetComponent<MayaMove>().Armor.ToString();
-		if (GetComponent<MayaMove>().Points > 0){
+		XPValue.text = Mathf.RoundToInt(MayaS.XP).ToString();
+		XPNextLevelValue.text = MayaS.xpNextLvl.ToString();
+		LevelValue.text = MayaS.Level.ToString();
+		StrenghValue.text = MayaS.STR.ToString();
+		AgilityValue.text = MayaS.AGI.ToString();
+		ConstitutionValue.text = MayaS.CON.ToString();
+		HPValue.text = MayaS.maxHP.ToString();
+		CreditsValue.text = MayaS.Credits.ToString();
+		minDMGValue.text = Mathf.RoundToInt(MayaS.minDamage).ToString();
+		maxDMGValue.text = Mathf.RoundToInt(MayaS.maxDamage).ToString();
+		ArmorValue.text = MayaS.Armor.ToString();
+		if (MayaS.Points > 0){
 			StrenghPlus.interactable = true;
 			AgilityPlus.interactable = true;
 			ConstitutionPlus.interactable = true;

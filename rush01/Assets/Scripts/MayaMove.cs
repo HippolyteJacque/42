@@ -5,10 +5,12 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class MayaMove : MonoBehaviour {
-
+    public static MayaMove instance;
+    [System.NonSerialized]public int SpellPoints;
     [System.NonSerialized]public int Credits;
     [System.NonSerialized]public int Points;
 	[System.NonSerialized]public float HP;
+    [System.NonSerialized]public float Mana;
 	[System.NonSerialized]public float maxHP;
 	[System.NonSerialized]public float STR;
 	[System.NonSerialized]public float AGI;
@@ -23,6 +25,7 @@ public class MayaMove : MonoBehaviour {
 
 	public Slider HPbar;
 	public Slider XPbar;
+    public Slider Manabar;
 	public Text HPtext;
 	public Text XPtext;
 	public Text LVLtext;
@@ -41,15 +44,27 @@ public class MayaMove : MonoBehaviour {
 	private GameObject targetUI;
 	public CanvasGroup EnemyCanvas;
     public CanvasGroup StatsCanvas;
+    public CanvasGroup SpellsCanvas;
     public CanvasGroup pointsBtn;
+    public CanvasGroup SpellPointsBtn;
 	Animator animator;
 
-	NavMeshAgent agent;
+	public NavMeshAgent agent;
+    float time;
 	int layerMask = 1 << 2;
 
+
+    void Awake()
+    {
+        if (instance != null)
+            Destroy(instance.gameObject);
+        instance = this;
+    }
     void Start() {
+        time = Time.timeSinceLevelLoad;
         alive = true;
         Credits = 5;
+        SpellPoints = 0;
         Points = 0;
     	STR = 20;
     	AGI = 20;
@@ -59,6 +74,7 @@ public class MayaMove : MonoBehaviour {
     	maxDamage = minDamage + 4;
 		HP = 5 * CON;
 		maxHP = HP;
+        Mana = maxHP;
 		Level = 1;
 		XP = 0;
 		xpNextLvl = 100;
@@ -73,6 +89,10 @@ public class MayaMove : MonoBehaviour {
     
     void Update() {
         if (alive == true){
+        	if (Input.GetKeyDown("l")){
+                LevelUp();
+            }
+            recoverMana();
             UpdateStats();
             UImanager();
             if (Input.GetMouseButtonUp(0)) {
@@ -134,6 +154,7 @@ public class MayaMove : MonoBehaviour {
 
     void UImanager(){
     	HPbar.value = HP/maxHP;
+        Manabar.value = Mana/maxHP;
     	XPbar.value = XP/xpNextLvl;
     	if (HP >= 0)
     		HPtext.text = Mathf.RoundToInt(HP).ToString() + "/" + maxHP.ToString();
@@ -144,9 +165,13 @@ public class MayaMove : MonoBehaviour {
 
     	if (targetUI){
     		EnemyCanvas.alpha = 1f;
-    		enemyHPbar.value = targetUI.GetComponent<ZombieMove>().HP/targetUI.GetComponent<ZombieMove>().maxHP;
+
+            if (targetUI.GetComponent<ZombieMove>() != null)
+            {
+                enemyLvl.text = targetUI.GetComponent<ZombieMove>().Level.ToString();
+                enemyHPbar.value = targetUI.GetComponent<ZombieMove>().HP/targetUI.GetComponent<ZombieMove>().maxHP;
+            }
 			enemyName.text = targetUI.name.Replace("(Clone)", "");
-			enemyLvl.text = targetUI.GetComponent<ZombieMove>().Level.ToString();
     	}
     	else {
     		EnemyCanvas.alpha = 0f;
@@ -155,6 +180,10 @@ public class MayaMove : MonoBehaviour {
             pointsBtn.alpha = 1f;
         else
             pointsBtn.alpha = 0f;
+        if (SpellPoints > 0)
+            SpellPointsBtn.alpha = 1f;
+        else
+            SpellPointsBtn.alpha = 0f;
     }
 
     void UpdateStats(){
@@ -163,13 +192,26 @@ public class MayaMove : MonoBehaviour {
         maxHP = 5 * CON;
     }
 
+    void recoverMana(){
+        float cd = 1f;
+        if (time <= Time.timeSinceLevelLoad)
+        {
+            if (Mana < maxHP){
+                time += cd;
+                Mana += maxHP * 0.05f;
+                if (Mana > maxHP)
+                    Mana = maxHP;
+            }
+        }
+    }
+
     void move(){
     	if (Input.GetMouseButton(0)) {
             RaycastHit hit;
             Vector3 mouse = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100, layerMask)) {
 
-                if (StatsCanvas.alpha == 1f && mouse.x <= 0.5){
+                if (StatsCanvas.alpha == 1f && mouse.x <= 0.5 || SpellsCanvas.alpha == 1f && mouse.x >= 0.5){
                     ;
                 }
                 else {
@@ -208,8 +250,10 @@ public class MayaMove : MonoBehaviour {
     }
 
     void attack(GameObject enemy){
-        StopCoroutine(LvlUp());
+        if (enemy.GetComponent<ZombieMove>() == null)
+            return;
     	agent.enabled = false;
+ 
     	if (Time.time > nextFire && enemy.GetComponent<ZombieMove>().HP > 0){
     		StopCoroutine("dmg");
 			animator.SetBool("isFighting", true);
@@ -217,32 +261,38 @@ public class MayaMove : MonoBehaviour {
 			StartCoroutine(dmg(enemy));
 		}
     	if (enemy.GetComponent<ZombieMove>().HP <= 0){
-    		if (enemy.GetComponent<ZombieMove>().XP + XP >= xpNextLvl){
-    			Level++;
-                StartCoroutine(LvlUp());
-                Points += 5;
-                HP = maxHP;
-    			XP = enemy.GetComponent<ZombieMove>().XP + XP - xpNextLvl;
-    			xpNextLvl = xpNextLvl * 1.5f;
-    		}
-    		else {
-    			XP = enemy.GetComponent<ZombieMove>().XP + XP;
-    		}
-    		money = money + enemy.GetComponent<ZombieMove>().money;
     		animator.SetBool("isFighting", false);
     		agent.enabled = true;
     		target = null;
     	}
     }
 
+    public void LevelUp(float xp = 0f){
+        StopCoroutine(LvlUp());
+        if (xp + XP >= xpNextLvl){
+            XP = xp + XP - xpNextLvl;
+        }
+        else {
+            XP = 0;
+        }
+        Level++;
+        StartCoroutine(LvlUp());
+        Points += 5;
+        SpellPoints += 1;
+        HP = maxHP;
+        Mana = maxHP;
+        xpNextLvl = xpNextLvl * 1.5f;
+    }
+
     IEnumerator dmg(GameObject enemy){
     	yield return new WaitForSeconds(0.5f);
+        ZombieMove EnemyS = enemy.GetComponent<ZombieMove>();
     	
-    	float hitChance = 75 + AGI - enemy.GetComponent<ZombieMove>().AGI;
+    	float hitChance = 75 + AGI - EnemyS.AGI;
     	if (Random.Range(0f, 100f) <= hitChance){
     		float dmg = Random.Range(minDamage, maxDamage);
-    		dmg = dmg * (1 - enemy.GetComponent<ZombieMove>().Armor/200);
-    		enemy.GetComponent<ZombieMove>().HP = enemy.GetComponent<ZombieMove>().HP - dmg;
+    		dmg = dmg * (1 - EnemyS.Armor/200);
+            EnemyS.TakeDmg(dmg);
     	}
     }
 
