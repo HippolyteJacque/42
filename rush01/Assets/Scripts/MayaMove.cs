@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class MayaMove : MonoBehaviour {
     public static MayaMove instance;
+
+	public CanvasGroup itemToolTipCanvas;
+	public Text ToolTipContent;
+
+    [SerializeField] Transform inventaire;
     [System.NonSerialized]public int SpellPoints;
     [System.NonSerialized]public int Credits;
     [System.NonSerialized]public int Points;
@@ -16,8 +21,11 @@ public class MayaMove : MonoBehaviour {
 	[System.NonSerialized]public float AGI;
 	[System.NonSerialized]public float CON;
 	[System.NonSerialized]public float Armor;
-	[System.NonSerialized]public float minDamage;
-	[System.NonSerialized]public float maxDamage;
+	public float minDamage;
+	public float maxDamage;
+
+	public float fireRate = 0.75f;
+
 	[System.NonSerialized]public int Level;
 	[System.NonSerialized]public float XP;
 	[System.NonSerialized]public float xpNextLvl;
@@ -38,7 +46,6 @@ public class MayaMove : MonoBehaviour {
 	private float attackDistance = 2f;
 
     private bool alive;
-	private float fireRate = 0.75f;
 	private float nextFire;
 	private GameObject target;
 	private GameObject targetUI;
@@ -53,6 +60,10 @@ public class MayaMove : MonoBehaviour {
     float time;
 	int layerMask = 1 << 2;
 
+    public AudioClip attacking;
+    public AudioClip dying;
+    public AudioClip lvlingUp;
+    public AudioSource audioSource;
 
     void Awake()
     {
@@ -93,7 +104,6 @@ public class MayaMove : MonoBehaviour {
                 LevelUp();
             }
             recoverMana();
-            UpdateStats();
             UImanager();
             if (Input.GetMouseButtonUp(0)) {
                 target = null;
@@ -152,6 +162,35 @@ public class MayaMove : MonoBehaviour {
         }
     }
 
+    void OnTriggerStay(Collider col){
+        if (col.tag == "item" && Input.GetKeyDown(KeyCode.E)){
+            bool haveSpace = false;
+            Transform targetSlot = null;
+            foreach (Transform child in inventaire)
+            {
+                if (child.childCount == 0)
+                {
+                    targetSlot = child;
+                    haveSpace = true;
+                }
+            }
+            if (!haveSpace)
+                return;
+
+            GameObject tmp = Instantiate(SpritePool.instance.itemInUi, targetSlot.transform.position, Quaternion.identity);
+
+            ItemStats t = col.gameObject.GetComponent<ItemStats>();
+            ItemStats t2 = tmp.GetComponent<ItemStats>();
+            t2.damage = t.damage;
+            t2.attackSpeed = t.attackSpeed;
+            t2.type = t.type;
+            tmp.GetComponent<Image>().sprite = col.GetComponent<SpriteRenderer>().sprite;
+            tmp.transform.SetParent(targetSlot);
+            tmp.transform.localPosition = Vector3.zero;
+            Destroy(col.gameObject);
+        }
+    }
+
     void UImanager(){
     	HPbar.value = HP/maxHP;
         Manabar.value = Mana/maxHP;
@@ -186,12 +225,6 @@ public class MayaMove : MonoBehaviour {
             SpellPointsBtn.alpha = 0f;
     }
 
-    void UpdateStats(){
-        minDamage = STR/2;
-        maxDamage = minDamage + 4;
-        maxHP = 5 * CON;
-    }
-
     void recoverMana(){
         float cd = 1f;
         if (time <= Time.timeSinceLevelLoad)
@@ -211,26 +244,25 @@ public class MayaMove : MonoBehaviour {
             Vector3 mouse = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100, layerMask)) {
 
-                if (StatsCanvas.alpha == 1f && mouse.x <= 0.5 || SpellsCanvas.alpha == 1f && mouse.x >= 0.5){
-                    ;
+                // if (StatsCanvas == 1f && mouse.x <= 0.5 || SpellsCanvas.alpha == 1f && mouse.x >= 0.5){
+                //     ;
+                // }
+
+                if (hit.collider.tag == "enemy" && Vector3.Distance(transform.position, hit.point) <= attackDistance && target == null){
+                    target = hit.transform.gameObject;
+                    animator.SetBool("isWalking", false);
+                    attack(target);
                 }
-                else {
-                    if (hit.collider.tag == "enemy" && Vector3.Distance(transform.position, hit.point) <= attackDistance && target == null){
-                        target = hit.transform.gameObject;
-                        animator.SetBool("isWalking", false);
-                        attack(target);
-                    }
-                    else if (hit.collider.tag == "enemy" && Vector3.Distance(transform.position, hit.point) > attackDistance && target == null){
-                        agent.destination = hit.point;
-                        target = hit.collider.gameObject;
-                        animator.SetBool("isWalking", true);
-                    }
-                    else if (target == null){
-                        transform.LookAt(hit.point);
-                        agent.destination = hit.point;
-                        animator.SetBool("isFighting", false);
-                        animator.SetBool("isWalking", true);
-                    }
+                else if (hit.collider.tag == "enemy" && Vector3.Distance(transform.position, hit.point) > attackDistance && target == null){
+                    agent.destination = hit.point;
+                    target = hit.collider.gameObject;
+                    animator.SetBool("isWalking", true);
+                }
+                else if (target == null){
+                    transform.LookAt(hit.point);
+                    agent.destination = hit.point;
+                    animator.SetBool("isFighting", false);
+                    animator.SetBool("isWalking", true);
                 }
             }
         }
@@ -286,23 +318,54 @@ public class MayaMove : MonoBehaviour {
 
     IEnumerator dmg(GameObject enemy){
     	yield return new WaitForSeconds(0.5f);
-        ZombieMove EnemyS = enemy.GetComponent<ZombieMove>();
-    	
-    	float hitChance = 75 + AGI - EnemyS.AGI;
-    	if (Random.Range(0f, 100f) <= hitChance){
-    		float dmg = Random.Range(minDamage, maxDamage);
-    		dmg = dmg * (1 - EnemyS.Armor/200);
-            EnemyS.TakeDmg(dmg);
-    	}
+        audioSource.PlayOneShot(attacking);
+
+        if (enemy.GetComponent<ZombieMove>() != null)
+        {
+            ZombieMove EnemyS = enemy.GetComponent<ZombieMove>();
+
+            float hitChance = 75 + AGI - EnemyS.AGI;
+            if (Random.Range(0f, 100f) <= hitChance){
+
+            float dmg = Random.Range(minDamage, maxDamage);
+            dmg = dmg * (1 - EnemyS.Armor/200);
+
+
+            if (EnemyS.GetComponent<ZombieMove>() != null)
+                    EnemyS.TakeDmg(dmg);//takedmg;
+            if (EnemyS.GetComponent<BossZombie>() != null)
+                    EnemyS.TakeDmg(dmg);//takeDamage;
+            }
+        }
+        else
+        {
+            BossZombie EnemySs = enemy.GetComponent<BossZombie>();
+
+            float hitChance2 = 75 + AGI - EnemySs.AGI;
+            if (Random.Range(0f, 100f) <= hitChance2){
+
+            float dmg = Random.Range(minDamage, maxDamage);
+            dmg = dmg * (1 - EnemySs.Armor/200);
+
+
+            if (EnemySs.GetComponent<ZombieMove>() != null)
+                    EnemySs.TakeDmg(dmg);//takedmg;
+            if (EnemySs.GetComponent<BossZombie>() != null)
+                    EnemySs.TakeDmg(dmg);//takeDamage;
+            }
+        }
+
     }
 
     IEnumerator LvlUp(){
         lvlup.SetActive(true);
+        audioSource.PlayOneShot(lvlingUp);
         yield return new WaitForSeconds(5);
         lvlup.SetActive(false);
     }
 
     IEnumerator death(){
+        audioSource.PlayOneShot(dying);
         alive = false;
         Credits--;
     	Destroy(GetComponent<CapsuleCollider>());
@@ -314,6 +377,8 @@ public class MayaMove : MonoBehaviour {
 
     public void addSTR(){
         STR += 1;
+        minDamage += 0.5f;
+        maxDamage = minDamage + 4;
         Points--;
     }
 
@@ -326,6 +391,7 @@ public class MayaMove : MonoBehaviour {
         CON += 1;
         Points--;
         HP += 5;
+        maxHP= 5 * CON;
     }
 
 }

@@ -6,11 +6,11 @@ public class FireShield : MonoBehaviour {
 
 	bool active;
 	public float cd = 0.5f;
-	public float damage = 10;
+	public float damage = 5;
 	float time;
 
 	Transform child;
-	float manaCost = 5;
+	public float manaCost = 5;
 
 	public void activeSpell()
 	{
@@ -69,7 +69,10 @@ public class FireShield : MonoBehaviour {
 			int i = 0;
 			while (i < hitColliders.Length)
 			{
-				hitColliders[i].GetComponent<ZombieMove>().TakeDmg(damage); //takeDamage
+				if (hitColliders[i].GetComponent<ZombieMove>() != null)
+		                hitColliders[i].GetComponent<ZombieMove>().TakeDmg(damage);//takeDamage;
+		        if (hitColliders[i].GetComponent<BossZombie>() != null)
+		                hitColliders[i].GetComponent<BossZombie>().TakeDmg(damage);//takeDamage;
 				i++;
 			}
 		}

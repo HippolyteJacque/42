@@ -4,4 +4,19 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/TitleScreen.unity
+    guid: b7f24967ca7154570afd0ecf554060a1
+  - enabled: 1
+    path: Assets/Scenes/ex00.unity
+    guid: 5b43a897ab6044a26a43dc1bacdcf7d9
+  - enabled: 1
+    path: Assets/Scenes/donjon01.unity
+    guid: 898592ad352364e919f2104fd76ea22b
+  - enabled: 1
+    path: Assets/Scenes/donjon02.unity
+    guid: e1d9d03f06dd7471abb40151f60948c9
+  - enabled: 1
+    path: Assets/Scenes/donjon03.unity
+    guid: b75098cfdd2b1475e938cc4c376eb3b0

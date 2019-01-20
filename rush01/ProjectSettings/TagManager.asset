@@ -6,6 +6,11 @@ TagManager:
   tags:
   - enemy
   - LifeBall
+  - equipCase
+  - inventaireCase
+  - TP
+  - ToolTipCanvas
+  - item
   layers:
   - Default
   - TransparentFX

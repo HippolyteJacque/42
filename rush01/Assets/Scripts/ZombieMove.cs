@@ -20,11 +20,13 @@ public class ZombieMove : MonoBehaviour {
 	private float attackDistance = 2f;
 	private float fireRate = 0.75f;
 	private float nextFire;
-
-	public GameObject LifeBall;
 	public bool alive;
 
 	private GameObject Maya;
+
+    public AudioClip attacking;
+    public AudioClip dying;
+    public AudioSource audioSource;
 
 	Animator animator;
 
@@ -109,10 +111,10 @@ public class ZombieMove : MonoBehaviour {
     }
 
     IEnumerator dmg(GameObject enemy){
-    	yield return new WaitForSeconds(0.5f);
-    	
+    	yield return new WaitForSeconds(0.3f);
     	float hitChance = 75 + AGI - enemy.GetComponent<MayaMove>().AGI;
     	if (Random.Range(0f, 100f) <= hitChance){
+            audioSource.PlayOneShot(attacking);
     		float dmg = Random.Range(minDamage, maxDamage);
     		dmg = dmg * (1 - enemy.GetComponent<MayaMove>().Armor/200);
     		enemy.GetComponent<MayaMove>().HP = enemy.GetComponent<MayaMove>().HP - dmg;
@@ -131,13 +133,30 @@ public class ZombieMove : MonoBehaviour {
     }
 
     IEnumerator death(){
-    	if (Random.Range(0f, 100f) <= 50f){
-    		Instantiate(LifeBall, transform.position, Quaternion.identity);
+    	if (Random.Range(0f, 100f) <= 100f){
+			if (Random.Range(0, 100f) < 0f)
+	    		Instantiate(SpritePool.instance.lifeBall, transform.position, Quaternion.identity);
+			else
+			{
+    			Instantiate(SpritePool.instance.itemInGame, transform.position, Quaternion.Euler(Vector3.right * 90f)).GetComponent<ItemStats>().InitStat();
+
+			}
+
     	}
     	Destroy(GetComponent<CapsuleCollider>());
     	Destroy(agent);
-    	transform.Translate(-Vector3.up * Time.deltaTime/15);
-    	yield return new WaitForSeconds(9);
+        audioSource.PlayOneShot(dying);
+
+		yield return new WaitForSeconds(3);
+		float t =0;
+		while (true)
+		{
+	    	transform.Translate(-Vector3.up * Time.deltaTime/5);
+			t += Time.deltaTime;
+			if (t > 2f);
+			yield return null;
+		}
+    	yield return new WaitForSeconds(1);
     	Destroy(gameObject);
     }
 

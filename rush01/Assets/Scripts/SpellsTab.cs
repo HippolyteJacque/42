@@ -7,9 +7,10 @@ using UnityEngine.Events;
 public class SpellsTab : MonoBehaviour {
 
 	public static SpellsTab instance; 
-	public CanvasGroup SpellsCanvas;
+	public Canvas SpellsCanvas;
 	public CanvasGroup GameHUD;
 	public CanvasGroup EnemyCanvas;
+	public Canvas InventoryCanvas;
 
 	public Button FireballPlus;
 	public Button HealPlus;
@@ -68,7 +69,7 @@ public class SpellsTab : MonoBehaviour {
 		FirearmorLvl = 0;
 		FirespikeLvl = 0;
 		MayaS = GetComponent<MayaMove>();
-		SpellsCanvas.alpha = 0f;
+		SpellsCanvas.enabled = false;
 	}
 	
 	void Update () {
@@ -93,19 +94,20 @@ public class SpellsTab : MonoBehaviour {
 			spell4.Invoke();
 		}
 
-		if (SpellsCanvas.alpha == 1f){
+		if (SpellsCanvas.enabled == true){
 			UpdateValues();
 		}
 	}
 
 	public void Show(){
-		if (SpellsCanvas.alpha == 0f){
-			SpellsCanvas.alpha = 1f;
+		if (SpellsCanvas.enabled == false){
+			SpellsCanvas.enabled = true;
+			InventoryCanvas.enabled = false;
 			GameHUD.alpha = 0f;
 			EnemyCanvas.alpha = 0f;
 		}
 		else{
-			SpellsCanvas.alpha = 0f;
+			SpellsCanvas.enabled = false;
 			GameHUD.alpha = 1f;
 		}
 	}

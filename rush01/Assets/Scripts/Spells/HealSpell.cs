@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HealSpell : MonoBehaviour {
 
-	[HideInInspector] public float healAmount = 20f;
+	[HideInInspector] public float healAmount = 10f;
 	[HideInInspector] public float manaCost = 20f;
 
 	ParticleSystem particle;

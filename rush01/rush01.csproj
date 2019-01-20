@@ -278,6 +278,9 @@
     <Reference Include="UnityEditor.OSXStandalone.Extensions">
       <HintPath>/Applications/Unity/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
+      <HintPath>/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/AddIns/MonoDevelop.Unity/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
+    </Reference>
     <Reference Include="JMOAssets">
       <HintPath>Assets/JMO Assets/Editor/JMOAssets.dll</HintPath>
     </Reference>
@@ -305,9 +308,6 @@
     <Reference Include="UnityEngine.StandardEvents">
       <HintPath>/Users/hjacque/Library/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.10/UnityEngine.StandardEvents.dll</HintPath>
     </Reference>
-    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
-      <HintPath>/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/AddIns/MonoDevelop.Unity/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="rush01.Plugins.csproj">
@@ -316,6 +316,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Item.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX\Demo\Assets\CFX_AutoStopLoopedEffect.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX\Demo\Assets\CFX_Demo_New.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX\Demo\Assets\CFX_Demo_RandomDir.cs" />
@@ -326,13 +327,18 @@
     <Compile Include="Assets\JMO Assets\Cartoon FX\Scripts\CFX_AutoRotate.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX\Scripts\CFX_LightFlicker.cs" />
     <Compile Include="Assets\JMO Assets\Cartoon FX\Scripts\CFX_LightIntensityFade.cs" />
-    <Compile Include="Assets\Scripts\FireShield.cs" />
     <Compile Include="Assets\Scripts\HackAndSlashCamera.cs" />
+    <Compile Include="Assets\Scripts\InventoryTab.cs" />
     <Compile Include="Assets\Scripts\MayaMove.cs" />
-    <Compile Include="Assets\Scripts\SingleTargetSpell.cs" />
-    <Compile Include="Assets\Scripts\Spell.cs" />
+    <Compile Include="Assets\Scripts\Spells\FireShield.cs" />
+    <Compile Include="Assets\Scripts\Spells\HealSpell.cs" />
+    <Compile Include="Assets\Scripts\Spells\SingleTargetSpell.cs" />
+    <Compile Include="Assets\Scripts\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\SpellsTab.cs" />
+    <Compile Include="Assets\Scripts\SpellUIManager.cs" />
     <Compile Include="Assets\Scripts\StatsTab.cs" />
+    <Compile Include="Assets\Scripts\Teleport.cs" />
+    <Compile Include="Assets\Scripts\ToolTipSpell.cs" />
     <Compile Include="Assets\Scripts\ZombieMove.cs" />
     <Compile Include="Assets\Scripts\ZombieSpawner.cs" />
   </ItemGroup>

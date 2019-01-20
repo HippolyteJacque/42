@@ -88,6 +88,8 @@ public class SpellUIManager : MonoBehaviour {
 	public void pickaSpell(Button spell){
 		SpellPicker.alpha = 0f;
 		spellId = int.Parse(spell.name);
+		if (activeSlot == null || activeSlot.GetComponentInChildren<RawImage>() == null)
+			return;
 		activeSlot.GetComponentInChildren<RawImage>().texture = spell.GetComponentInChildren<RawImage>().texture;
 
 		if (slotId == 0)

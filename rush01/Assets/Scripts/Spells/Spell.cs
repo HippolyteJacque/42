@@ -62,7 +62,10 @@ public class Spell : MonoBehaviour {
 				int i = 0;
 				while (i < hitColliders.Length)
 				{
-					hitColliders[i].GetComponent<ZombieMove>().TakeDmg(damage); //takeDamage
+				if (hitColliders[i].GetComponent<ZombieMove>() != null)
+		                hitColliders[i].GetComponent<ZombieMove>().TakeDmg(damage);//takeDamage;
+		        if (hitColliders[i].GetComponent<BossZombie>() != null)
+		                hitColliders[i].GetComponent<BossZombie>().TakeDmg(damage);//takeDamage;
 					i++;
 				}
 				end = true;

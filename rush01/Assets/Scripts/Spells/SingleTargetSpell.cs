@@ -52,7 +52,11 @@ public class SingleTargetSpell : MonoBehaviour {
 			
 			particle.transform.position = hit.collider.gameObject.transform.position;
 			particle.Play();
-			hit.collider.GetComponent<ZombieMove>().TakeDmg(damage);//takeDamage;
+
+			if (hit.collider.GetComponent<ZombieMove>() != null)
+					hit.collider.GetComponent<ZombieMove>().TakeDmg(damage);//takeDamage;
+			if (hit.collider.GetComponent<BossZombie>() != null)
+					hit.collider.GetComponent<BossZombie>().TakeDmg(damage);//takeDamage;
 
 		}
 
