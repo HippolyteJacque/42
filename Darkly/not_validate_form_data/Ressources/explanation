@@ -1,0 +1,1 @@
+Sur la page survey, si j'ai envie de donner une note de 99999999 pour tricher à Thor, je peux changer la data envoyee en post avec un outil comme burp. La note n'est pas verifiée coté serveur.

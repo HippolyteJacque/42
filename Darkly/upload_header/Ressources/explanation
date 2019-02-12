@@ -1,0 +1,1 @@
+On ecrit un script php qu'on upload sur la page d'upload d'image. On change le content-type dans le header d'envoi et on y met "image/jpg". Le dev n'a pas protegé en back l'upload. Il aaurait du verifier l'extension du fichier, interdire l'execution de code dans ce dossier, renommer le fichier aleatoirement, forcer le type MIME des fichiers envoyés.

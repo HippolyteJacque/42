@@ -1,0 +1,1 @@
+Avec l'explorateur de cookie chrome, on a remarque que le cookie n'etait pas securise en http et que l'on pouvait modifier sa valeur. On a identifie qu'il etait encrypte en md5. On peut decrypter le md5, la valeur donnait donc false pour I_am_admin donc lorsqu'on a encrypte true, on pouvait obtenir les acces admin.

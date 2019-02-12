@@ -1,0 +1,1 @@
+En regardant les variables de redirection pour instagram et facebook, je me suis aperçu que site=facebook sans le .com voulait dire que ce n'était pas une redirection simple. L'url de facebook est imprimee dans une condition donc je peux entrer d'autres infos dans cette variable... A MIEUX EXPLIQUER

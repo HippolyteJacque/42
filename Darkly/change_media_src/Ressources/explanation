@@ -1,0 +1,8 @@
+page media, changement src=nsa
+
+base64:
+<script>alert('coucou')</script> = PHNjcmlwdD5hbGVydCgnY291Y291Jyk8L3NjcmlwdD4=
+
+
+
+src=data:text/html;base64,PHNjcmlwdD5hbGVydCgnY291Y291Jyk8L3NjcmlwdD4=

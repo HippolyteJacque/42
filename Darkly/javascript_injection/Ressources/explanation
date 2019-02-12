@@ -1,0 +1,1 @@
+on the feedback page you can insert a script in the database by submiting a message with the name field == <ScRipt>window.alert('ahah !')</scRipt> (change the maxlength field value to 100 in the dom using the chrome inspector)

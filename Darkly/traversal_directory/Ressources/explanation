@@ -1,0 +1,2 @@
+GET ?page non sécurisée donc traversal directory pour parcourir le serveur. /etc/passwd = base de donnee d'infos users
+En remontant avec plusieurs ../ on y accede.
