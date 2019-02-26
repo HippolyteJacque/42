@@ -1,6 +1,0 @@
-En fouillant sur l'index, on a decouvert qu'une image ne menait pas a son adresse statique mais a une requete GET page=media et src=nsa
-On tente d'acceder a d'autres fichiers du serveur en changeant la variable src et on remarque que la propriete data du tag object change en fonction de ce qu'on y met.
-On tente d'y insérer un script js en donnant la data en base 64 <script> alert("coucou"); </script> -> PHNjcmlwdD4gYWxlcnQoImNvdWNvdSIpOyA8L3NjcmlwdD4=
-
-On ajoute le type mime et le type d'encodage base 64 suivi d'une virgule et du script encodé
-data:text/html;base64,PHNjcmlwdD4gYWxlcnQoImNvdWNvdSIpOyA8L3NjcmlwdD4=
