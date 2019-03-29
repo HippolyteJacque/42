@@ -7,7 +7,8 @@
             "AppBundle\\": "src/AppBundle",
             "E00Bundle\\": "src/E00Bundle",
             "E01Bundle\\": "src/E01Bundle",
-            "E02Bundle\\": "src/E02Bundle"
+            "E02Bundle\\": "src/E02Bundle",
+            "E03Bundle\\": "src/E03Bundle"
         },
         "classmap": [
             "app/AppKernel.php",
