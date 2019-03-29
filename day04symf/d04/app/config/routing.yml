@@ -1,0 +1,24 @@
+e02:
+    resource: "@E02Bundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+e01:
+    resource: "@E01Bundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+e00:
+    resource: "@E00Bundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation
+
+ex01:
+    path: /home/e01
+
+ex00/firstpage:
+    path: /home/e00/firstpage
