@@ -306,23 +306,10 @@ class DefaultController extends Controller
 
             $json = json_encode(array( 'trainer' => $trainer, 'position' => $position, 'moviemons_alive' => $moviemons_alive, 'moviemons_capture' => $moviemons_capture));
             file_put_contents($name.".json", $json);
-            $str = $this->createMap($position, $moviemons_alive, $moviemons_capture);
-            return $this->render('moviemonsBundle::index.html.twig', array('content' => $str));
+            return $this->Redirect('/map', 308);
         }
         else {
-        	$menu_items = array('new', 'save', 'load');
-            $str = "<ul>";
-            foreach ($menu_items as $key => $item) {
-                $str .= "<li style='list-style-type: none;'><a href='/".$item."'>".$item."</a></li>";
-            }
-            $str .= "</ul>";
-            if ( $page == 'gameover'){
-                $str .= "<h2>GAME OVER</h2>";  
-            }
-            if ( $page == "gg" ){
-                $str .= "<h2>WELL DONE</h2>";
-            }
-            return $this->render('moviemonsBundle::index.html.twig', array('content' => $str));
+        	return $this->Redirect('/options', 308);
         }
     }
 
@@ -340,14 +327,18 @@ class DefaultController extends Controller
             if (in_array($request->query->get('name'), $saves)){
             	$data = file_get_contents($request->query->get('name').".json");
 	            $data = json_decode($data, true);
-
-	            $this->get('session')->set('name', $request->query->get('name'));
-	            $this->get('session')->set('trainer', $data['trainer']);
-	            $this->get('session')->set('position', $data['position']);
-	            $this->get('session')->set('moviemonsalive', $data['moviemons_alive']);
-	            $this->get('session')->set('moviemonscapture', $data['moviemons_capture']);
-	            $str = $this->createMap($data['position'], $data['moviemons_alive'], $data['moviemons_capture']);
-	            return $this->render('moviemonsBundle::index.html.twig', array('content' => $str));
+                if ($data != null){
+                    $this->get('session')->set('name', $request->query->get('name'));
+                    $this->get('session')->set('trainer', $data['trainer']);
+                    $this->get('session')->set('position', $data['position']);
+                    $this->get('session')->set('moviemonsalive', $data['moviemons_alive']);
+                    $this->get('session')->set('moviemonscapture', $data['moviemons_capture']);
+                    return $this->Redirect('/map', 308);
+                }
+	            else {
+                    unlink($request->query->get('name').".json");
+                    return $this->Redirect('/load', 308);
+                }
             }
             else {
             	return $this->Redirect('/load', 308);
