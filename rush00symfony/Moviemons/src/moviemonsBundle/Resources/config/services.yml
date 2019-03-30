@@ -1,0 +1,4 @@
+services:
+#    moviemons.example:
+#        class: moviemonsBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
