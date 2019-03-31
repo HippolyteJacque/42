@@ -19,16 +19,16 @@ class DefaultController extends Controller
                     $str .= "<td style='background-color : green;'>O<br>/|\<br>^</td>";
                 }
                 else if ( $i == $position[0] - 1 && $u == $position[1]) {
-                    $str .= "<td><a style='font-size: 24px;' href='/fight?position=".$i.",".$u."'>^</a></td>";
+                    $str .= "<td><a style='font-size: 24px;' href='/rdytofight?position=".$i.",".$u."'>^</a></td>";
                 }
                 else if ( $i == $position[0] && $u == $position[1] - 1 ) {
-                    $str .= "<td><a style='font-size: 24px;' href='/fight?position=".$i.",".$u."'><</a></td>";
+                    $str .= "<td><a style='font-size: 24px;' href='/rdytofight?position=".$i.",".$u."'><</a></td>";
                 }
                 else if ( $i == $position[0] && $u == $position[1] + 1 ) {
-                    $str .= "<td><a style='font-size: 24px;' href='/fight?position=".$i.",".$u."'>></a></td>";
+                    $str .= "<td><a style='font-size: 24px;' href='/rdytofight?position=".$i.",".$u."'>></a></td>";
                 }
                 else if ( $i == $position[0] + 1 && $u == $position[1] ) {
-                    $str .= "<td><a style='font-size: 19px;' href='/fight?position=".$i.",".$u."'>V</a></td>";
+                    $str .= "<td><a style='font-size: 19px;' href='/rdytofight?position=".$i.",".$u."'>V</a></td>";
                 }
                 else {
                     $str .= "<td></td>";
@@ -139,6 +139,9 @@ class DefaultController extends Controller
     */
     public function map(Request $request)
     {
+        if (strpos($this->getRequest()->headers->get('referer'), '/fight') !== false){
+            $this->get('session')->set('current_fight', null);
+        }
         if ( $request->query->get('position') ){
             $this->get('session')->set('position', explode(",", $request->query->get('position')));
             $position = $this->get('session')->get('position');
@@ -196,15 +199,27 @@ class DefaultController extends Controller
     }
 
     /**
+    * @Route("/rdytofight", name="rdytofight")
+    */
+    public function rdytofight(Request $request)
+    {
+        if (strpos($this->getRequest()->headers->get('referer'), '/map') !== false) {
+            $pos = $request->query->get('position');
+            $this->get('session')->set('position', explode(",", $request->query->get('position')));
+            $str = "<a href='/fight?position=".$pos."'>lets fight !<a><br><a href='/map'>i dont want to fight</a>";
+            return $this->render('moviemonsBundle::index.html.twig', array('content' => $str));
+        }
+        else {
+            return $this->Redirect('/map', 308);
+        }
+    }
+
+    /**
     * @Route("/fight", name="fight")
     */
     public function fight(Request $request)
     {
-    	// echo $this->get('request')->getSchemeAndHttpHost();
-    	// echo "<br>";
-    	echo $this->getRequest()->headers->get('referer');
-        if ( $request->query->get('position') && $this->getRequest()->headers->get('referer') == $this->get('request')->getSchemeAndHttpHost().'/map' && $this->get('session')->get('current_fight') == null){
-            $this->get('session')->set('position', explode(",", $request->query->get('position')));
+        if ( $request->query->get('position') && strpos($this->getRequest()->headers->get('referer'), '/rdytofight') !== false && $this->get('session')->get('current_fight') == null){
             $moviemonsleft = $this->get('session')->get('moviemonsalive');
 
             if (empty($moviemonsleft)){
@@ -283,7 +298,7 @@ class DefaultController extends Controller
             $moviemons_data = $this->get('session')->get('moviemonsalive'); 
             $moviemons_data = $moviemons_data[$fight['id']];
 
-            $str = "<img src='".$moviemons_data[3]."'><h1>".$moviemons_data[0]."</h1><br><h3> moviemonhp : ".$fight['hp']."<br>moviemon pw : ".$moviemons_data[2]."</h3><br><h3>trainer hp : ".$trainer_data[0]."<br>trainer pw : ".$trainer_data[1]."</h3><a href='/fight'>FIGHT</a><br><a href='/map'>retour map</a>";
+            $str = "<img src='".$moviemons_data[3]."'><h1>".$moviemons_data[0]."</h1><br><h3> moviemon hp : ".$fight['hp']."<br>moviemon pw : ".$moviemons_data[2]."</h3><br><h3>trainer hp : ".$trainer_data[0]."<br>trainer pw : ".$trainer_data[1]."</h3><a href='/fight'>FIGHT</a><br><a href='/map'>retour map</a>";
             return $this->render('moviemonsBundle::index.html.twig', array('content' => $str));
         }
         else {
@@ -351,6 +366,7 @@ class DefaultController extends Controller
                 $str .= "<li><a href='/load?name=".str_replace(".json", "", $value)."'>".str_replace(".json", "", $value)."</a></li>";
             }
             $str .= "</ul>";
+            $str .= "<a href='/options'>retour options</a>";
             return $this->render('moviemonsBundle::index.html.twig', array('content' => $str));
         }
     }
