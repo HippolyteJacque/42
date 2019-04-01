@@ -1,0 +1,4 @@
+services:
+#    e04.example:
+#        class: E04Bundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
