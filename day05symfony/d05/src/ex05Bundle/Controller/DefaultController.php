@@ -50,7 +50,7 @@ class DefaultController extends Controller
     		}
 			return $this->render('ex05Bundle:Default:index.html.twig', array("content" => $content));
 		}
-        return $this->render('ex00Bundle::index.html.twig');
+        return $this->render('ex00Bundle::index.html.twig', array('content' => ""));
     }
 
     /**

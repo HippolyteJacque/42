@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+        
+        {{ 'text1'|trans }} {{ number }}
+        <br>
+
+        {% if count == 0 %}
+            {{ 'text2.0' |trans }} {{ count }}
+        {% endif %}
+        {% if count == 1 %}
+            {{ 'text2.1' |trans }} {{ count }}
+        {% endif %}
+        {% if count > 1 %}
+            {{ 'text2.2' |trans }} {{ count }}
+        {% endif %}
+        
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>
