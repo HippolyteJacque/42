@@ -1,0 +1,4 @@
+d09:
+    resource: "@D09Bundle/Controller/"
+    type:     annotation
+    prefix:   /
