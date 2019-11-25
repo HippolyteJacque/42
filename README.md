@@ -1,4 +1,5 @@
-# some of my 42 school projects
+# Welcome to my github !
+## here you can find some school projects i made at 42 Paris
 
 ### [Darkly](https://github.com/HippolyteJacque/42/tree/master/Darkly):
   a web security project, how to detect, hack and prevent security flaws
